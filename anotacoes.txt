@@ -1,6 +1,26 @@
-# Anotações Trabalho BANCO DE DADOS
+Anotações Trabalho BANCO DE DADOS
 
-* ## Tarefas Pendentes
+Tarefas Pendentes:
+
+1. Criação de pelo menos 5 tabelas em SQL.
+2. Inserção de pelo menos 2 tuplas em cada tabela criada.
+3. Criação de pelo menos 10 enunciados de consulta e o respectivo SQL
+4. Criação de pelo menos 2 enunciados de alteração de tuplas e o respectivo SQL
+5. Criação de pelo menos 2 enunciados de exclusão de tuplas e o respectivo SQL
 
 
-* ## Tarefas Concluídas
+Tarefas Concluídas:
+
+
+
+
+
+
+Informações Complementares:
+
+- O trabalho deve ser feito, no máximo, em duplas.
+- O trabalho completo deve ser enviado pelo Moodle até o dia 01 de junho às 23h55min.
+- NÃO serão aceitos trabalhos encaminhados após a data e horário definidos.
+- O trabalho valerá 2,0 ponto na nota do semestre.
+- Caso seja identificada cópia de trabalho, seja de colega ou qualquer outra fonte, o trabalho
+será ZERADO.
