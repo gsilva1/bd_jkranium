@@ -25,7 +25,7 @@ Informações Complementares:
 - Caso seja identificada cópia de trabalho, seja de colega ou qualquer outra fonte, o trabalho
 será ZERADO.
 
-***
+
 
 ## Exercício 1
 
@@ -40,7 +40,7 @@ CREATE TABLE Cliente(
 	email_cliente	VARCHAR2(40),
     CONSTRAINT pk_cliente PRIMARY KEY(cnpj_cliente)
 );
-**
+************************************************************************************************
 Emissor([CpfFuncionárioEmissor], NomeEmissor, TeleEmissor)
 
 CREATE TABLE Emissor(
@@ -49,7 +49,7 @@ CREATE TABLE Emissor(
 	tel_emissor	 VARCHAR2(15),
     CONSTRAINT pk_emissor PRIMARY KEY(cpf_emissor)
 );
-**
+************************************************************************************************
 Fornecedor ([CnpjForn], NomeForn, TelForn, VendForn, EmailForn)
 
 CREATE TABLE Fornecedor(
@@ -60,7 +60,7 @@ CREATE TABLE Fornecedor(
 	email_fornecedor   VARCHAR2(40),
     CONSTRAINT  pk_fornecedor PRIMARY KEY(cnpj_fornecedor)
 );
-**
+************************************************************************************************
 Endereço ([CodEnder], CnpjCliente, CnpjForn, CpfFuncionarioEmissor, RuaEnder, BairroEnder, CidadeEnder, UFEnder)
 CnpjCliente referencia a tabela clientes
 CnpjForn referencia a Fornecedor
@@ -78,11 +78,11 @@ CREATE TABLE Endereco(
 	rua_endereco	  VARCHAR2(30),
 	numlocal_endereco NUMBER;
 	CONSTRAINT pk_endereco PRIMARY KEY(id_endereco),
-	CONSTRAINT fk_tbl_cliente FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
-	CONSTRAINT fk_tbl_emissor FOREIGN KEY(cpf_emissor) REFERENCES Emissor(cpf_emissor),
-	CONSTRAINT fk_tbl_fornecedor FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),
+	CONSTRAINT fk_endereco-cliente FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
+	CONSTRAINT fk_endereco-emissor FOREIGN KEY(cpf_emissor) REFERENCES Emissor(cpf_emissor),
+	CONSTRAINT fk_endereco-fornecedor FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),
 );
-**
+************************************************************************************************
 Item ([CodItem], QtdItem, ValorItem, CnpjForn)
 CnpjForn referencia Fornecedor
 
@@ -92,9 +92,9 @@ CREATE TABLE Item(
 	qtd_item		NUMBER,
 	valor_item		NUMBER,
 	CONSTRAINT pk_item PRIMARY KEY(cod_item),
-	CONSTRAINT fk_tbl_fornecedor FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),	
+	CONSTRAINT fk_item-fornecedor FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),	
 );
-**
+************************************************************************************************
 Produto ([CodItem], NomeProduto, QtdProduto) 
 CodItem referencia Item
 
@@ -103,9 +103,9 @@ CREATE TABLE Produto(
 	nome_produto	VARCHAR2(40),
 	qtd_produto		NUMBER,
 	CONSTRAINT pk_produto PRIMARY KEY(cod_produto),
-	CONSTRAINT fk_tbl_item FOREIGN KEY(cod_produto) REFERENCES Item(cod_item)
+	CONSTRAINT fk_produto-item FOREIGN KEY(cod_produto) REFERENCES Item(cod_item)
 );
-**
+************************************************************************************************
 Serviço (CodItem, DescrServiço,) 
 CodItem referencia Item.
 
@@ -113,9 +113,9 @@ CREATE TABLE Servico(
 	cod_servico  NUMBER,
 	desc_servico VARCHAR2(100),
 	CONSTRAINT pk_servico PRIMARY KEY(cod_servico),
-	CONSTRAINT fk_tbl_item FOREIGN KEY(cod_servico) REFERENCES Item(cod_item)
+	CONSTRAINT fk_servico-item FOREIGN KEY(cod_servico) REFERENCES Item(cod_item)
 );
-**
+************************************************************************************************
 Orçamento ([NumOrcamento], CnpjCliente, CpfFuncionarioEmissor, CodItem, ValorOrcamento, FormPagOrcamento, DescrOrcamento, DataOrcamento)
 CnpjCliente referencia cliente.
 CpfFuncionarioEmissor referencia a Emissor. 
@@ -131,8 +131,8 @@ CREATE TABLE Orcamento(
 	descr_orcamento	   VARCHAR2(100),
 	data_orcamento	   DATE,
 	CONSTRAINT pk_orcamento PRIMARY KEY(num_orcamento),
-	CONSTRAINT fk_tbl_cliente FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
-	CONSTRAINT fk_tbl_emissor FOREIGN KEY(cpf_emissor) REFERENCES  Emissor(cpf_emissor),	
-	CONSTRAINT fk_tbl_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)
+	CONSTRAINT fk_orcamento-cliente FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
+	CONSTRAINT fk_orcamento-emissor FOREIGN KEY(cpf_emissor) REFERENCES  Emissor(cpf_emissor),	
+	CONSTRAINT fk_orcamento-item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)
 );
-***
+************************************************************************************************
