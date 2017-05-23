@@ -24,3 +24,115 @@ Informações Complementares:
 - O trabalho valerá 2,0 ponto na nota do semestre.
 - Caso seja identificada cópia de trabalho, seja de colega ou qualquer outra fonte, o trabalho
 será ZERADO.
+
+***
+
+## Exercício 1
+
+Clientes([CnpjCliente], NomeCliente, ContatoCliente, TelCliente1, TelCliente2, EmailCliente)
+
+CREATE TABLE Cliente(
+	cnpj_cliente	NUMBER,
+	nome_cliente 	VARCHAR2(50),
+	contato_cliente VARCHAR2(50),
+	tel1_cliente	VARCHAR2(15),
+	tel2_cliente	VARCHAR2(15),
+	email_cliente	VARCHAR2(40),
+    CONSTRAINT pk_cliente PRIMARY KEY(cnpj_cliente)
+);
+**
+Emissor([CpfFuncionárioEmissor], NomeEmissor, TeleEmissor)
+
+CREATE TABLE Emissor(
+	cpf_emissor	 NUMBER,
+	nome_emissor VARCHAR2(50),
+	tel_emissor	 VARCHAR2(15),
+    CONSTRAINT pk_emissor PRIMARY KEY(cpf_emissor)
+);
+**
+Fornecedor ([CnpjForn], NomeForn, TelForn, VendForn, EmailForn)
+
+CREATE TABLE Fornecedor(
+	cnpj_fornecedor    NUMBER(14),
+	nome_fornecedor	   VARCHAR2(50),
+	empresa_fornecedor VARCHAR2(50),
+	tel_fornecedor	   VARCHAR2(15),
+	email_fornecedor   VARCHAR2(40),
+    CONSTRAINT  pk_fornecedor PRIMARY KEY(cnpj_fornecedor)
+);
+**
+Endereço ([CodEnder], CnpjCliente, CnpjForn, CpfFuncionarioEmissor, RuaEnder, BairroEnder, CidadeEnder, UFEnder)
+CnpjCliente referencia a tabela clientes
+CnpjForn referencia a Fornecedor
+CpfFuncionarioEmissor   referencia Emissor.
+
+CREATE TABLE Endereco(
+	id_endereco	      NUMBER,
+	cnpj_cliente 	  NUMBER,
+	cpf_emissor	      NUMBER,
+	cnpj_fornecedor	  NUMBER,
+	uf_endereco		  VARCHAR2(2),
+	cidade_endereco	  VARCHAR2(20),
+	bairro_endereco	  VARCHAR2(20),
+	cep_endereco   	  VARCHAR2(10),
+	rua_endereco	  VARCHAR2(30),
+	numlocal_endereco NUMBER;
+	CONSTRAINT pk_endereco PRIMARY KEY(id_endereco),
+	CONSTRAINT fk_tbl_cliente FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
+	CONSTRAINT fk_tbl_emissor FOREIGN KEY(cpf_emissor) REFERENCES Emissor(cpf_emissor),
+	CONSTRAINT fk_tbl_fornecedor FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),
+);
+**
+Item ([CodItem], QtdItem, ValorItem, CnpjForn)
+CnpjForn referencia Fornecedor
+
+CREATE TABLE Item(
+	cod_item		NUMBER,
+	cnpj_fornecedor	NUMBER,
+	qtd_item		NUMBER,
+	valor_item		NUMBER,
+	CONSTRAINT pk_item PRIMARY KEY(cod_item),
+	CONSTRAINT fk_tbl_fornecedor FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),	
+);
+**
+Produto ([CodItem], NomeProduto, QtdProduto) 
+CodItem referencia Item
+
+CREATE TABLE Produto(
+	cod_produto		NUMBER,
+	nome_produto	VARCHAR2(40),
+	qtd_produto		NUMBER,
+	CONSTRAINT pk_produto PRIMARY KEY(cod_produto),
+	CONSTRAINT fk_tbl_item FOREIGN KEY(cod_produto) REFERENCES Item(cod_item)
+);
+**
+Serviço (CodItem, DescrServiço,) 
+CodItem referencia Item.
+
+CREATE TABLE Servico(
+	cod_servico  NUMBER,
+	desc_servico VARCHAR2(100),
+	CONSTRAINT pk_servico PRIMARY KEY(cod_servico),
+	CONSTRAINT fk_tbl_item FOREIGN KEY(cod_servico) REFERENCES Item(cod_item)
+);
+**
+Orçamento ([NumOrcamento], CnpjCliente, CpfFuncionarioEmissor, CodItem, ValorOrcamento, FormPagOrcamento, DescrOrcamento, DataOrcamento)
+CnpjCliente referencia cliente.
+CpfFuncionarioEmissor referencia a Emissor. 
+CodItem referencia Item.
+	 
+CREATE TABLE Orcamento(
+	num_orcamento      NUMBER,
+	cnpj_cliente	   NUMBER,
+	cpf_emissor	       NUMBER,
+	cod_item	       NUMBER,
+	valor_orcamento    NUMBER,
+	formapag_orcamento NUMBER, 
+	descr_orcamento	   VARCHAR2(100),
+	data_orcamento	   DATE,
+	CONSTRAINT pk_orcamento PRIMARY KEY(num_orcamento),
+	CONSTRAINT fk_tbl_cliente FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
+	CONSTRAINT fk_tbl_emissor FOREIGN KEY(cpf_emissor) REFERENCES  Emissor(cpf_emissor),	
+	CONSTRAINT fk_tbl_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)
+);
+***
