@@ -1,12 +1,3 @@
-﻿Anotações Trabalho BANCO DE DADOS
-
-Tarefas Pendentes:
-
-
-3. Criação de pelo menos 10 enunciados de consulta e o respectivo SQL
-4. Criação de pelo menos 2 enunciados de alteração de tuplas e o respectivo SQL
-5. Criação de pelo menos 2 enunciados de exclusão de tuplas e o respectivo SQL
-
 
 Tarefas Concluídas:
 1. Criação de pelo menos 5 tabelas em SQL.
@@ -92,10 +83,15 @@ CREATE TABLE Item(
 	valor_item		NUMBER,
 	CONSTRAINT pk_item PRIMARY KEY(cod_item),
 	CONSTRAINT fk_item_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor)
+    
+    =======================================================
+    alter table item add descricao varchar2(50);
+    
+    select * from atividade
 );
 
-CREATE TABLE Atividade(					//
-	cod_atividade		NUMBER,			//	
+CREATE TABLE Atividade(
+	cod_atividade		NUMBER,
 	descricao_atividade varchar2(30),
 	CONSTRAINT pk_atividade PRIMARY KEY(cod_atividade)
 );
@@ -142,6 +138,9 @@ CREATE TABLE Orcamento(
 	CONSTRAINT fk_orc_emi FOREIGN KEY(cpf_emissor) REFERENCES  Emissor(cpf_emissor),	
 	CONSTRAINT fk_orc_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)
 );
+
+select * from produto
+select * from orcamento
 ************************************************************************************************
 
 ## Tarefa 2
@@ -193,6 +192,10 @@ INSERT INTO produto VALUES(8,4, 'Central de controle dependente',5);
 *************** ocorreu conforme eu tinha previsto. não foi possível cadastrar o 5 produto pois como ela esta associada a tabela item não pode haver mais produtos que itens, 
 alem de não poder cadastrar dois produtos com o mesmo codigo de item. por isto é necessário criar uma chave nova
 
+
+select * from orcamento
+select * from servico
+
 ###tabela servico
 
 INSERT INTO servico VALUES(1, 'verificação dos sistemas');
@@ -201,9 +204,9 @@ INSERT INTO servico VALUES(3, 'venda de produtos avulsa');
 INSERT INTO servico VALUES(4, 'orcamento sem compromisso');
 
 ###tabela orcamento
-INSERT INTO orcamento VALUES(1, 804308789, 804309, 1, 3750, 1, 'Orçamento de bracadeira para reforma de apartamento', to_date('22/05/2017', 'dd/mm/yyyy'));   
-INSERT INTO orcamento VALUES(2, 805308780, 804309, 2, 15808, 2, 'Orçamento de eletrodutos para reforma de apartamento', to_date('10/05/2017', 'dd/mm/yyyy'));
-INSERT INTO orcamento VALUES(3, 804308790, 804310, 4, 1600, 1, 'Orçamento para sistema completo em um salao de festas', to_date('17/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(1, 804308789, 804309, 1, 3750, 1, 'manutencao em sistema de combate a indcendio', to_date('22/05/2017', 'dd/mm/yyyy'));   
+INSERT INTO orcamento VALUES(2, 805308780, 804309, 2, 15808, 2, 'Orçamento de eletrodutos para venda direta', to_date('10/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(3, 804308790, 804310, 4, 1600, 1, 'Orçamento para sistema completo de combate a incendio', to_date('17/05/2017', 'dd/mm/yyyy'));
 
 
 ************************************************************************************************
@@ -215,10 +218,20 @@ INSERT INTO orcamento VALUES(3, 804308790, 804310, 4, 1600, 1, 'Orçamento para 
 SELECT * FROM orcamento;
 
 
-2 - Exibir para que clientes o funcionário Augusto Santana fez orcamento junto ao número do orcamento.
+2 - Exibir para que clientes o funcionário Augusto Santana fez orcamento. apresentar o nome do cliente e o número do orcamento. //// alterei
 
-SELECT o.num_orcamento, c.nome_cliente, e.nome_emissor FROM cliente c
-INNER JOIN orcamento o ON c.cnpj_cliente = o.cnpj_cliente AND o.cpf_emissor = 804309
+select * from orcamento
+select * from clientes
+
+select o.num_orcamento, c.nome_cliente 
+from orcamento o inner join emissor e on o.cfp_emissor = e.cpf_emissor
+                inner join clientes c on c.cnjp_cliente = o.cnpj_cliente
+where e.nome_emissor = 'augusto santana'
+
+
+
+SELECT o.num_orcamento, c.nome_cliente, e.nome_emissor 
+FROM cliente c INNER JOIN orcamento o ON c.cnpj_cliente = o.cnpj_cliente 
 INNER JOIN emissor e ON e.nome_emissor = 'augusto santana';
 
 
@@ -229,10 +242,12 @@ SELECT COUNT(*) AS QTD_ORCAMENTOS FROM orcamento;
 
 4 - Exibir os dados de todos os clientes.
 
-SELECT * FROM cliente;
+SELECT * FROM cliente
+SELECT * FROM produto
+SELECT * FROM endereco
+SELECT * FROM item
 
 
-5 - quais 
 
 
 
