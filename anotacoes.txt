@@ -1,4 +1,4 @@
-Anotações Trabalho BANCO DE DADOS
+﻿Anotações Trabalho BANCO DE DADOS
 
 Tarefas Pendentes:
 
@@ -38,8 +38,7 @@ CREATE TABLE Cliente(
 	tel1_cliente	VARCHAR2(15),
 	tel2_cliente	VARCHAR2(15),
 	email_cliente	VARCHAR2(40),
-        CONSTRAINT pk_cliente PRIMARY KEY(cnpj_cliente)
-);
+        CONSTRAINT pk_cliente PRIMARY KEY(cnpj_cliente));
 ************************************************************************************************
 Emissor([CpfFuncionárioEmissor], NomeEmissor, TeleEmissor)
 
@@ -94,16 +93,23 @@ CREATE TABLE Item(
 	CONSTRAINT pk_item PRIMARY KEY(cod_item),
 	CONSTRAINT fk_item_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor)
 );
+
+CREATE TABLE Atividade(
+	cod_atividade		NUMBER,
+	descricao_atividade varchar2(30),
+	CONSTRAINT pk_atividade PRIMARY KEY(cod_atividade)
+);
 ************************************************************************************************
 Produto ([CodItem], NomeProduto, QtdProduto) 
 CodItem referencia Item
 
 CREATE TABLE Produto(
-	cod_produto		NUMBER,
-	nome_produto	VARCHAR2(40),
+    cod_produto		NUMBER,                                  // foi inserido por mim
+	cod_item        number,
+    nome_produto	VARCHAR2(40),
 	qtd_produto		NUMBER,
 	CONSTRAINT pk_produto PRIMARY KEY(cod_produto),
-	CONSTRAINT fk_prod_item FOREIGN KEY(cod_produto) REFERENCES Item(cod_item)
+	CONSTRAINT fk_prod_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)     //foi alterado por mim
 );
 ************************************************************************************************
 Serviço (CodItem, DescrServiço,) 
@@ -126,6 +132,7 @@ CREATE TABLE Orcamento(
 	cnpj_cliente	   NUMBER,
 	cpf_emissor	       NUMBER,
 	cod_item	       NUMBER,
+    cod_produto        Number,  //eu acrescentei
 	valor_orcamento    NUMBER,
 	formapag_orcamento NUMBER, 
 	descr_orcamento	   VARCHAR2(100),
@@ -164,22 +171,34 @@ INSERT INTO endereco VALUES(2, 805308780, 804310, 906306897, 'RS', 'Canoas', 'Re
 INSERT INTO endereco VALUES(3, 804308790, 804309, 80830897, 'RS', 'Viamão',  'São Pedro', '312451236', 'Travessa Carlos Pereira', 1246);
 
 ###tabela item
+eu não to entendendo esta tabela.
 
-INSERT INTO item VALUES(1, 80430897, 300, 12.50);
-INSERT INTO item VALUES(2, 80430897, 128,123.50);
-INSERT INTO item VALUES(3, 906306897, 40, 92.50);
-INSERT INTO item VALUES(4, 80830897, 3, 1600.00);
-
+INSERT INTO item VALUES(1, 80430897, 300, 12.50);   // produto
+INSERT INTO item VALUES(2, 80430897, 128,123.50);   //produto e servico
+INSERT INTO item VALUES(3, 906306897, 40, 92.50);   //servico
+INSERT INTO item VALUES(4, 80830897, 3, 1600.00);   //exclui esta linha
+select * from item
 ###tabela produto
 
-INSERT INTO produto VALUES(1, 'bracadeira tipo A',300);
-INSERT INTO produto VALUES(2, 'eletroduto vermelho',128);
+INSERT INTO produto VALUES(1,1, 'bracadeira tipo A',300);
+INSERT INTO produto VALUES(2,1, 'eletroduto vermelho',128);
+INSERT INTO produto VALUES(3,2, 'botoeira independente',30);
+INSERT INTO produto VALUES(4,3, 'parafusos 8mm',1000);
+INSERT INTO produto VALUES(5,1, 'buchas 8mm para concreto',1000);
+INSERT INTO produto VALUES(6,1, 'canaleta metalica',100);
+INSERT INTO produto VALUES(7,4, 'Central de controle autonoma',10);
+INSERT INTO produto VALUES(8,4, 'Central de controle dependente',5);
 
+
+*************** ocorreu conforme eu tinha previsto. não foi possível cadastrar o 5 produto pois como ela esta associada a tabela item não pode haver mais produtos que itens, 
+alem de não poder cadastrar dois produtos com o mesmo codigo de item. por isto é necessário criar uma chave nova
 
 ###tabela servico
 
-INSERT INTO servico VALUES(3, 'manutenção em câmeras');
-INSERT INTO servico VALUES(4, 'instalação de sistema completo de segurança');
+INSERT INTO servico VALUES(1, 'verificação dos sistemas');
+INSERT INTO servico VALUES(2, 'instalação de sistema completo de segurança');
+INSERT INTO servico VALUES(3, 'venda de produtos avulsa');
+INSERT INTO servico VALUES(4, 'orcamento sem compromisso');
 
 ###tabela orcamento
 INSERT INTO orcamento VALUES(1, 804308789, 804309, 1, 3750, 1, 'Orçamento de bracadeira para reforma de apartamento', to_date('22/05/2017', 'dd/mm/yyyy'));   
