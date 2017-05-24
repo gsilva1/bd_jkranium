@@ -1,19 +1,13 @@
-﻿Anotações Trabalho BANCO DE DADOS
+﻿
+atualizado em 24 de maio de 2017
 
-Tarefas Pendentes:
-
-
-3. Criação de pelo menos 10 enunciados de consulta e o respectivo SQL
-4. Criação de pelo menos 2 enunciados de alteração de tuplas e o respectivo SQL
-5. Criação de pelo menos 2 enunciados de exclusão de tuplas e o respectivo SQL
+executei (alex)
+1. exclui as minhas tabelas
 
 
 Tarefas Concluídas:
 1. Criação de pelo menos 5 tabelas em SQL.
 2. Inserção de pelo menos 2 tuplas em cada tabela criada.
-
-
-
 
 
 Informações Complementares:
@@ -40,13 +34,14 @@ CREATE TABLE Cliente(
 	email_cliente	VARCHAR2(40),
         CONSTRAINT pk_cliente PRIMARY KEY(cnpj_cliente));
 ************************************************************************************************
-Emissor([CpfFuncionárioEmissor], NomeEmissor, TeleEmissor)
+Funcionario([CpfFuncionárioEmissor], NomeFunc, TeleFunc)
 
-CREATE TABLE Emissor(
-	cpf_emissor	 NUMBER,
-	nome_emissor VARCHAR2(50),
-	tel_emissor	 VARCHAR2(15),
-        CONSTRAINT pk_emissor PRIMARY KEY(cpf_emissor)
+CREATE TABLE Funcionarios( 
+	id_func      NUMBER,
+    cpf_func	 NUMBER,
+	nome_func    VARCHAR2(50),
+	tel_func	 VARCHAR2(15),
+        CONSTRAINT pk_funcionario PRIMARY KEY(id_func)
 );
 ************************************************************************************************
 Fornecedor ([CnpjForn], NomeForn, TelForn, VendForn, EmailForn)
@@ -60,87 +55,71 @@ CREATE TABLE Fornecedor(
         CONSTRAINT  pk_fornecedor PRIMARY KEY(cnpj_fornecedor)
 );
 ************************************************************************************************
-Endereço ([CodEnder], CnpjCliente, CnpjForn, CpfFuncionarioEmissor, RuaEnder, BairroEnder, CidadeEnder, UFEnder)
+Endereço ([CodEnder], CnpjCliente, CnpjForn, CodFuncionario, RuaEnder, BairroEnder, CidadeEnder, UFEnder)
 CnpjCliente referencia a tabela clientes
 CnpjForn referencia a Fornecedor
 CpfFuncionarioEmissor   referencia Emissor.
+//não ficou claro o pq dos dados de todas as outras tabelas
 
-CREATE TABLE Endereco(
+CREATE TABLE Endereco(                  
 	id_endereco	      NUMBER,
 	cnpj_cliente 	  NUMBER,
-	cpf_emissor	      NUMBER,
+	cod_func	      NUMBER,
 	cnpj_fornecedor	  NUMBER,
 	uf_endereco		  VARCHAR2(2),
 	cidade_endereco	  VARCHAR2(30),
 	bairro_endereco	  VARCHAR2(30),
 	cep_endereco   	  VARCHAR2(15),
-	rua_endereco	  VARCHAR2(30),
-	numlocal_endereco NUMBER,
-	CONSTRAINT pk_endereco PRIMARY KEY(id_endereco),
-	CONSTRAINT fk_end_cli FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
-	CONSTRAINT fk_end_emi FOREIGN KEY(cpf_emissor) REFERENCES Emissor(cpf_emissor),
-	CONSTRAINT fk_end_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor)
-);
+	rua_endereco	  VARCHAR2(30));
+	ALTER TABLE endereco add CONSTRAINT pk_endereco PRIMARY KEY(id_endereco);
+	ALTER TABLE endereco add CONSTRAINT fk_end_cli FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente);
+	ALTER TABLE endereco add CONSTRAINT fk_end_func FOREIGN KEY(cod_func) REFERENCES Funcionarios(id_func);
+	ALTER TABLE endereco add CONSTRAINT fk_end_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor);
+    
 ************************************************************************************************
 Item ([CodItem], QtdItem, ValorItem, CnpjForn)
 CnpjForn referencia Fornecedor
-
+ //TIPO DE ITEM = 1 para servico| 2 - para produtos
 CREATE TABLE Item(
 	cod_item		NUMBER,
-	cnpj_fornecedor	NUMBER,
+	tipo_item       NUMBER,         
+    item_descricao  VARCHAR2(50),
+    cnpj_fornecedor	NUMBER,
 	qtd_item		NUMBER,
 	valor_item		NUMBER,
 	CONSTRAINT pk_item PRIMARY KEY(cod_item),
-	CONSTRAINT fk_item_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor)
-);
+	CONSTRAINT fk_item_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),
+    constraint ck_tipoitem  check (tipo_item in (1, 2)));
+    );
 
-CREATE TABLE Atividade(					//
-	cod_atividade		NUMBER,			//	
-	descricao_atividade varchar2(30),
-	CONSTRAINT pk_atividade PRIMARY KEY(cod_atividade)
+************************************************************************************************
+FormaPagamento ([id_formaPag],DescricaoFormaPag)
+
+CREATE TABLE formaPagamento(
+    id_formaPag         NUMBER,
+    descricao_formapag  VARCHAR2(30),
+    CONSTRAINT pk_formpag PRIMARY KEY(id_formaPag)
 );
 ************************************************************************************************
-Produto ([CodItem], NomeProduto, QtdProduto) 
-CodItem referencia Item
-
-CREATE TABLE Produto(
-    cod_produto		NUMBER,                                  // foi inserido por mim
-	cod_item        number,
-    nome_produto	VARCHAR2(40),
-	qtd_produto		NUMBER,
-	CONSTRAINT pk_produto PRIMARY KEY(cod_produto),
-	CONSTRAINT fk_prod_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)     //foi alterado por mim
-);
-************************************************************************************************
-Serviço (CodItem, DescrServiço,) 
-CodItem referencia Item.
-
-CREATE TABLE Servico(
-	cod_servico  NUMBER,
-	desc_servico VARCHAR2(100),
-	CONSTRAINT pk_servico PRIMARY KEY(cod_servico),
-	CONSTRAINT fk_serv_item FOREIGN KEY(cod_servico) REFERENCES Item(cod_item)
-);
-************************************************************************************************
-Orçamento ([NumOrcamento], CnpjCliente, CpfFuncionarioEmissor, CodItem, ValorOrcamento, FormPagOrcamento, DescrOrcamento, DataOrcamento)
+Orçamento ([NumOrcamento], CnpjCliente, CodFunc, CodItem, ValorOrcamento, FormPagOrcamento, DescrOrcamento, DataOrcamento)
 CnpjCliente referencia cliente.
 CpfFuncionarioEmissor referencia a Emissor. 
 CodItem referencia Item.
 	 
 CREATE TABLE Orcamento(
-	num_orcamento      NUMBER,
+	id_orcamento       NUMBER,
 	cnpj_cliente	   NUMBER,
-	cpf_emissor	       NUMBER,
+	id_func            NUMBER,
 	cod_item	       NUMBER,
-    cod_produto        Number,  //eu acrescentei
 	valor_orcamento    NUMBER,
-	formapag_orcamento NUMBER, 
+	id_formaPag        NUMBER, 
 	descr_orcamento	   VARCHAR2(100),
 	data_orcamento	   DATE,
-	CONSTRAINT pk_orcamento PRIMARY KEY(num_orcamento),
+	CONSTRAINT pk_orcamento PRIMARY KEY(id_orcamento),
 	CONSTRAINT fk_orc_cli FOREIGN KEY(cnpj_cliente) REFERENCES Cliente(cnpj_cliente),
-	CONSTRAINT fk_orc_emi FOREIGN KEY(cpf_emissor) REFERENCES  Emissor(cpf_emissor),	
-	CONSTRAINT fk_orc_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item)
+	CONSTRAINT fk_orc_func FOREIGN KEY(id_func) REFERENCES  Funcionarios(id_func),	
+	CONSTRAINT fk_orc_item FOREIGN KEY(cod_item) REFERENCES Item(cod_item));
+    constraint fk_orc_formPag FOREIGN KEY(id_formaPag) REFERENCES FormaPagamento(id_formaPag)
 );
 ************************************************************************************************
 
@@ -153,58 +132,62 @@ INSERT INTO cliente VALUES(804308789,'DHB servicos de engenharia','antonio da si
 INSERT INTO cliente VALUES(805308780,'IJS engenharia','valdemar', '(51)34384560', '(51)98565711','valdemarss@gmail.com');
 INSERT INTO cliente VALUES(804308790,'DANA Albarus','joaquim', '(55)34964860', '(51)984365778','joaquimdeportugal@gmail.com');
 
-###tabela emissor
+###tabela Funcionarios
 
-INSERT INTO emissor VALUES(804309, 'augusto santana', '(51)984365711');
-INSERT INTO emissor VALUES(804310, 'alex sena', '(51)984365715');
+INSERT INTO Funcionarios VALUES(1, 804309, 'Alex Sena', '(51)984365711');
+INSERT INTO Funcionarios VALUES(2, 804310, 'Guilherme Cunha', '(51)984365715');
+INSERT INTO Funcionarios VALUES(3, 804312, 'Joao Eufrasio', '(51)984365723');
 
 ###tabela fornecedor
 
 INSERT INTO fornecedor VALUES(80430897, 'sistemas anti incendio beta', 'carlos', '(51)98435712','contato1@saib.com.br'); 
 INSERT INTO fornecedor VALUES(906306897, 'adpatar sistemas', 'jose', '(51)984353782','contatoadaptar@adaptar.com.br'); 
-INSERT INTO fornecedor VALUES(80830897, 'anti incendio', 'carlos', '(51)98435712','contato1@saib.com.br'); 
+INSERT INTO fornecedor VALUES(80830897, 'AC equipamentos anti incendios', 'joana', '(51)98435712','contato1@saib.com.br'); 
 
 ###tabela endereco
+//OBSERVE QUE EMBORA A TABELA SEJA PARA TODOS SOMENTE OS CAMPOS A QUE SE REFERE SÃO PREENCHIDOS. POR EXEMPLO, QUANDO FOR O FORNECEDOR OS
+CAMPOS QUE DIZEM RESPEITO A CLIENTE E FUNCIONARIOS PERMANECEM NULOS. FALTOU QUE REFERENCIASSEMOS NAS TABELAS DE ORIGENS OS CAMPOS DE ENDEREÇO, OU SEJA, EM 
+FORNECEDOR UM CAMPO COD_ENDERECO.
 
-INSERT INTO endereco VALUES(1, 804308789, 804309, 80430897, 'RS', 'Porto Alegre', 'Jardim das Flores', '423526124', 'Rua Flor de Liz', 6134);
-INSERT INTO endereco VALUES(2, 805308780, 804310, 906306897, 'RS', 'Canoas', 'Recanto das Laranjeiras', '235265121', 'Avenida Boqueirão', 8344 );
-INSERT INTO endereco VALUES(3, 804308790, 804309, 80830897, 'RS', 'Viamão',  'São Pedro', '312451236', 'Travessa Carlos Pereira', 1246);
+INSERT INTO endereco VALUES(1, 804308789, NULL, NULL, 'RS', 'Porto Alegre', 'Jardim das Flores', '94000-000', 'Rua Flor de Liz,6134');
+INSERT INTO endereco VALUES(2, 805308780, NULL, NULL, 'RS', 'Canoas', 'Recanto das Laranjeiras', '94000-000', 'Avenida Boqueirão,8344');
+INSERT INTO endereco VALUES(3, 804308790,NULL , NULL, 'RS', 'Viamão',  'São Pedro', '94070-090', 'Rua Abc, 1246');
+INSERT INTO endereco VALUES(4,NULL,NULL,80430897 , 'RS', 'Viamão',  'São Pedro', '94000-800', 'Rua antoonio Carlos,123');
+INSERT INTO endereco VALUES(5,NULL ,NULL ,906306897, 'RS', 'Viamão',  'São Pedro', '94250-000', 'Travessa 12, 345');
+INSERT INTO endereco VALUES(6,NULL ,NULL ,80830897, 'RS', 'Viamão',  'Santa rosa', '94040-000', 'Travessa Carlos Pereira,678');
+INSERT INTO endereco VALUES(7,NULL ,1 ,NULL, 'RS', 'Porto Alegre',  'Sarandi', '94050-000', 'Rua CDE, 234');
+INSERT INTO endereco VALUES(8,NULL ,2 ,NULL, 'RS', 'Gravatai',  'Morada do Vale 3', '94030-000', 'Rua EFFG, 345');
+INSERT INTO endereco VALUES(9,NULL ,3 ,NULL, 'RS', 'Cachoeirinha',  'granja', '94340-000', 'Travessa A,678');
 
 ###tabela item
-eu não to entendendo esta tabela.
 
-INSERT INTO item VALUES(1, 80430897, 300, 12.50);   // produto
-INSERT INTO item VALUES(2, 80430897, 128,123.50);   //produto e servico
-INSERT INTO item VALUES(3, 906306897, 40, 92.50);   //servico
-INSERT INTO item VALUES(4, 80830897, 3, 1600.00);   //exclui esta linha
 select * from item
-###tabela produto
+INSERT INTO item VALUES(1,1,'Manutenção Preventiva Programada',NULL,NULL,150.00);   
+INSERT INTO item VALUES(2,1,'Verificação dos Sistemas',NULL,NULL,150.00);
+INSERT INTO item VALUES(3,1,'Instalação de Sistema de combate a incendio',80830897,1,2000.00);
+INSERT INTO item VALUES(4,2,'parafuso para concreto 8mm',906306897,150,0.50);
+INSERT INTO item VALUES(5,2,'Bracadeira para concreto tipo c',906306897,200,0.30);
+INSERT INTO item VALUES(6,2,'Tubulacao anti chamas preta',906306897,30,15.50);
+INSERT INTO item VALUES(7,2,'Botoeira tipo 1',80430897,10,105.50);
+INSERT INTO item VALUES(8,2,'Botoeira autonoma',80430897,20,205.50);
+INSERT INTO item VALUES(9,2,'Detector de fumaça tipo 1',80830897,50,100);
+INSERT INTO item VALUES(10,2,'Detector de fumaça tipo 2',80830897,50,100);
 
-INSERT INTO produto VALUES(1,1, 'bracadeira tipo A',300);
-INSERT INTO produto VALUES(2,1, 'eletroduto vermelho',128);
-INSERT INTO produto VALUES(3,2, 'botoeira independente',30);
-INSERT INTO produto VALUES(4,3, 'parafusos 8mm',1000);
-INSERT INTO produto VALUES(5,1, 'buchas 8mm para concreto',1000);
-INSERT INTO produto VALUES(6,1, 'canaleta metalica',100);
-INSERT INTO produto VALUES(7,4, 'Central de controle autonoma',10);
-INSERT INTO produto VALUES(8,4, 'Central de controle dependente',5);
+###tabela formaPagamento
 
+INSERT INTO formaPagamento VALUES(1,'Pagamento a vista');
+INSERT INTO formaPagamento VALUES(2,'Pagamento a vista em 30 dias');
+INSERT INTO formaPagamento VALUES(3,'Pagamento a vista em 60 dias');
 
-*************** ocorreu conforme eu tinha previsto. não foi possível cadastrar o 5 produto pois como ela esta associada a tabela item não pode haver mais produtos que itens, 
-alem de não poder cadastrar dois produtos com o mesmo codigo de item. por isto é necessário criar uma chave nova
-
-###tabela servico
-
-INSERT INTO servico VALUES(1, 'verificação dos sistemas');
-INSERT INTO servico VALUES(2, 'instalação de sistema completo de segurança');
-INSERT INTO servico VALUES(3, 'venda de produtos avulsa');
-INSERT INTO servico VALUES(4, 'orcamento sem compromisso');
-
-###tabela orcamento
-INSERT INTO orcamento VALUES(1, 804308789, 804309, 1, 3750, 1, 'Orçamento de bracadeira para reforma de apartamento', to_date('22/05/2017', 'dd/mm/yyyy'));   
-INSERT INTO orcamento VALUES(2, 805308780, 804309, 2, 15808, 2, 'Orçamento de eletrodutos para reforma de apartamento', to_date('10/05/2017', 'dd/mm/yyyy'));
-INSERT INTO orcamento VALUES(3, 804308790, 804310, 4, 1600, 1, 'Orçamento para sistema completo em um salao de festas', to_date('17/05/2017', 'dd/mm/yyyy'));
-
+###tabela orcamento 
+select * from orcamento
+INSERT INTO orcamento VALUES(1, 804308789, 1, 1, 3750.00, 1, 'manutencao em sistema de combate a indcendio', to_date('22/05/2017', 'dd/mm/yyyy'));   
+INSERT INTO orcamento VALUES(2, 804308789, 2, 10, 15808, 2, 'Instalação de detectore e correcao do sistema', to_date('10/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(3, 804308789, 1, 6, 1600, 3, 'Orçamento troca sistema tubulação', to_date('17/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(4, 805308780, 3, 7, 1600, 3, 'instalação de botoeiras', to_date('08/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(5, 805308780, 3, 8, 1600, 3, 'instalação de botoeiras', to_date('08/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(6, 805308780, 3, 2, 150, 3, 'verificação e teste do sistema', to_date('07/05/2017', 'dd/mm/yyyy'));
+INSERT INTO orcamento VALUES(7, 805308780, 3, 1, 150, 1, 'verificação e teste do sistema', to_date('03/05/2017', 'dd/mm/yyyy'));
 
 ************************************************************************************************
 
@@ -215,24 +198,64 @@ INSERT INTO orcamento VALUES(3, 804308790, 804310, 4, 1600, 1, 'Orçamento para 
 SELECT * FROM orcamento;
 
 
-2 - Exibir para que clientes o funcionário Augusto Santana fez orcamento junto ao número do orcamento.
+2 - Exibir para que clientes o funcionário Alex sena fez orçaamento. Apresentar o nome do cliente e o número do orcamento. 
 
-SELECT o.num_orcamento, c.nome_cliente, e.nome_emissor FROM cliente c
-INNER JOIN orcamento o ON c.cnpj_cliente = o.cnpj_cliente AND o.cpf_emissor = 804309
-INNER JOIN emissor e ON e.nome_emissor = 'augusto santana';
-
+select o.id_orcamento, c.nome_cliente
+from orcamento o inner join cliente c on o.cnpj_cliente = c.cnpj_cliente
+                inner join funcionarios f on o.id_func = f.id_func
+where f.nome_func = 'Alex Sena';
 
 3 - Exibir quantidade de orcamentos realizados.
 
 SELECT COUNT(*) AS QTD_ORCAMENTOS FROM orcamento;
 
+4 - Exibir os clientes que não realizaram nenhum orçamento.
 
-4 - Exibir os dados de todos os clientes.
+select c.nome_cliente
+from cliente c
+where not exists (select *
+                from orcamento o
+                where o.cnpj_cliente = c.cnpj_cliente);
 
-SELECT * FROM cliente;
+5 - qual a media dos orcamentos realizados?
 
+select avg(valor_orcamento)
+from orcamento
 
-5 - quais 
+6 - qual o item mais vendidos e para qual cliente?
+select * from orcamento
+select * from item
+
+select item_descricao,  nome_cliente,  count(*)
+from item i, cliente c, orcamento o
+where i.cod_item = o.cod_item and o.cnpj_cliente = c.cnpj_cliente
+group by item_descricao,  nome_cliente
+
+select distinct i.item_descricao,  c.nome_cliente,  count(*)
+from item i inner join orcamento o on i.cod_item = o.cod_item
+            inner join cliente c on o.cnpj_cliente = c.cnpj_cliente
+group by item_descricao,  nome_cliente
+
+/////nao esta funcionando, acho que falta uma subconsulta
+
+7 - quantos orcamentos foram somente de compra de produtos?
+
+select count(*)
+from orcamento o, item i
+where o.cod_item = i.cod_item and i.cnpj_fornecedor = NULL
+
+select count(*)
+from orcamento o
+where o.cod_item = i.cod_item exists in(select *  from  item i
+                    where o.cod_item = i.cod_item and i.cnpj_fornecedor = NULL);
+
+select * from orcamento
+
+8 - Altere o valor do item 5(Braçadeira para concreto tipo c) para R$ 1,30.
+
+9 - Exclua o endereço do funcionario de numero 3 (João).
+
+10 - quais orçamentos foram realizados na primeira quinzena de maio de 2017?
 
 
 
