@@ -122,11 +122,9 @@ CREATE TABLE Orcamento(
     constraint fk_orc_formPag FOREIGN KEY(id_formaPag) REFERENCES FormaPagamento(id_formaPag)
 );
 ************************************************************************************************
-
 ## Tarefa 2
 
-
-####tabela clientes
+####tabela cliente
 
 INSERT INTO cliente VALUES(804308789,'DHB servicos de engenharia','antonio da silva', '(51)34383460', '(51)984365711','antonioss@gmail.com');
 INSERT INTO cliente VALUES(805308780,'IJS engenharia','valdemar', '(51)34384560', '(51)98565711','valdemarss@gmail.com');
@@ -161,7 +159,6 @@ INSERT INTO endereco VALUES(9,NULL ,3 ,NULL, 'RS', 'Cachoeirinha',  'granja', '9
 
 ###tabela item
 
-select * from item
 INSERT INTO item VALUES(1,1,'Manutenção Preventiva Programada',NULL,NULL,150.00);   
 INSERT INTO item VALUES(2,1,'Verificação dos Sistemas',NULL,NULL,150.00);
 INSERT INTO item VALUES(3,1,'Instalação de Sistema de combate a incendio',80830897,1,2000.00);
@@ -180,7 +177,7 @@ INSERT INTO formaPagamento VALUES(2,'Pagamento a vista em 30 dias');
 INSERT INTO formaPagamento VALUES(3,'Pagamento a vista em 60 dias');
 
 ###tabela orcamento 
-select * from orcamento
+
 INSERT INTO orcamento VALUES(1, 804308789, 1, 1, 3750.00, 1, 'manutencao em sistema de combate a indcendio', to_date('22/05/2017', 'dd/mm/yyyy'));   
 INSERT INTO orcamento VALUES(2, 804308789, 2, 10, 15808, 2, 'Instalação de detectore e correcao do sistema', to_date('10/05/2017', 'dd/mm/yyyy'));
 INSERT INTO orcamento VALUES(3, 804308789, 1, 6, 1600, 3, 'Orçamento troca sistema tubulação', to_date('17/05/2017', 'dd/mm/yyyy'));
@@ -244,27 +241,47 @@ select count(*)
 from orcamento o, item i
 where o.cod_item = i.cod_item and i.cnpj_fornecedor = NULL
 
+***** nao esta funcionando
 select count(*)
 from orcamento o
 where o.cod_item = i.cod_item exists in(select *  from  item i
                     where o.cod_item = i.cod_item and i.cnpj_fornecedor = NULL);
 
 select * from orcamento
-
+select * from item
+select * from endereco
+select * from formapagamento
+select * from funcionarios
 8 - Altere o valor do item 5(Braçadeira para concreto tipo c) para R$ 1,30.
 
-9 - Exclua o endereço do funcionario de numero 3 (João).
+update item
+set valor_item = 1.3
+where cod_item = 5
+
+9 - Exclua o produto 3(instalação de sistema de combate a incendio) da tabela ítens.
+
+delete from item
+where cod_item = 3
 
 10 - quais orçamentos foram realizados na primeira quinzena de maio de 2017?
 
+select * from orcamento
+select * from cliente
 
+***** não esta funcionando
 
+select cliente.nome_cliente, orcamento.descr_orcamento
+from orcamento inner join cliente on cliente.id_cliente = orcamento.id_cliente
+where in (select *
+            from orcamento
+            where data_orcamento >= to_char('01/05/2017','dd/mm/yyyy') and to_char('16/05/2017','dd/mm/yyyy'))
 
-
-
-
-
-
+select cliente.nome_cliente
+from cliente inner join locacoes on cliente.id_cliente = locacoes.id_cliente
+			 where in (select *
+						from locacoes
+						where data_locacao >= to_char('01/09/2013', 'dd/mm/yyyy') and to_char('27/09/2013','dd/mm/yyyy'));
+						
 
 
 
