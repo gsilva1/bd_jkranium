@@ -1,4 +1,4 @@
-﻿
+
 Tarefas:
 
 3. Criação de pelo menos 10 enunciados de consulta e o respectivo SQL
