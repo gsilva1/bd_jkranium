@@ -1,13 +1,10 @@
-﻿
+
 atualizado em 24 de maio de 2017
-
-executei (alex)
-1. exclui as minhas tabelas
-
 
 Tarefas Concluídas:
 1. Criação de pelo menos 5 tabelas em SQL.
 2. Inserção de pelo menos 2 tuplas em cada tabela criada.
+3. Confecção dos 10 exercicios (faltam responder o 6 e o 7)
 
 
 Informações Complementares:
@@ -220,8 +217,6 @@ select avg(valor_orcamento)
 from orcamento
 
 6 - qual o item mais vendidos e para qual cliente?
-select * from orcamento
-select * from item
 
 select item_descricao,  nome_cliente,  count(*)
 from item i, cliente c, orcamento o
@@ -237,21 +232,8 @@ group by item_descricao,  nome_cliente
 
 7 - quantos orcamentos foram somente de compra de produtos?
 
-select count(*)
-from orcamento o, item i
-where o.cod_item = i.cod_item and i.cnpj_fornecedor = NULL
+//não esta funcionando
 
-***** nao esta funcionando
-select count(*)
-from orcamento o
-where o.cod_item = i.cod_item exists in(select *  from  item i
-                    where o.cod_item = i.cod_item and i.cnpj_fornecedor = NULL);
-
-select * from orcamento
-select * from item
-select * from endereco
-select * from formapagamento
-select * from funcionarios
 8 - Altere o valor do item 5(Braçadeira para concreto tipo c) para R$ 1,30.
 
 update item
@@ -266,22 +248,12 @@ where cod_item = 3
 10 - quais orçamentos foram realizados na primeira quinzena de maio de 2017?
 
 select * from orcamento
-select * from cliente
+            where data_orcamento between to_date('01/05/2017','dd/mm/yyyy') and to_date('16/05/2017','dd/mm/yyyy')
 
-***** não esta funcionando
 
-select cliente.nome_cliente, orcamento.descr_orcamento
-from orcamento inner join cliente on cliente.id_cliente = orcamento.id_cliente
-where in (select *
-            from orcamento
-            where data_orcamento >= to_char('01/05/2017','dd/mm/yyyy') and to_char('16/05/2017','dd/mm/yyyy'))
 
-select cliente.nome_cliente
-from cliente inner join locacoes on cliente.id_cliente = locacoes.id_cliente
-			 where in (select *
-						from locacoes
-						where data_locacao >= to_char('01/09/2013', 'dd/mm/yyyy') and to_char('27/09/2013','dd/mm/yyyy'));
-						
+
+
 
 
 
