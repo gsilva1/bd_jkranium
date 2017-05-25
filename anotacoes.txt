@@ -1,8 +1,11 @@
+select * from cat;
+purge recyclebin;
+
 
 Tarefas:
 
-3. Criação de pelo menos 10 enunciados de consulta e o respectivo SQL
-4. Criação de pelo menos 2 enunciados de alteração de tuplas e o respectivo SQL
+
+
 5. Criação de pelo menos 2 enunciados de exclusão de tuplas e o respectivo SQL
 
 
@@ -10,6 +13,8 @@ Tarefas Concluídas:
 
 1. Criação de pelo menos 5 tabelas em SQL.
 2. Inserção de pelo menos 2 tuplas em cada tabela criada.
+3. Criação de pelo menos 10 enunciados de consulta e o respectivo SQL
+4. Criação de pelo menos 2 enunciados de alteração de tuplas e o respectivo SQL
 
 
 Informações Complementares:
@@ -90,7 +95,7 @@ CREATE TABLE Item(
     cnpj_fornecedor	VARCHAR2(15),
 	qtd_item		NUMBER,
 	valor_item		NUMBER,
-    item_descricao  VARCHAR2(50),
+    descricao_item  VARCHAR2(50),
 	CONSTRAINT pk_item PRIMARY KEY(id_item),
 	CONSTRAINT fk_item_forn FOREIGN KEY(cnpj_fornecedor) REFERENCES Fornecedor(cnpj_fornecedor),
     CONSTRAINT ck_tipoitem  CHECK (tipo_item in (1, 2))
@@ -195,14 +200,16 @@ INSERT INTO orcamento VALUES(7, '50403020101', '80706050401', 1,    150, 1, 'Ver
 
 ## Tarefa 3
 
-1 - Exibir todos os orçamentos.
+1 - Exibir todos os orçamentos ordenados pelo valor do orçamento de forma que
+a primeira tupla contenha o orçamento com maior valor.
 
-SELECT * FROM orcamento;
+SELECT * FROM orcamento ORDER BY valor_orcamento DESC;
 
 
-2 - Exibir para que clientes o funcionário Alex Sena fez orçamento. Apresentar o nome do cliente e o número do orcamento. 
+2 - Exibir para quais clientes o funcionário Alex Sena fez orçamento. Apresentar o nome do cliente, o número do orcamento
+e seu respectivo valor.
 
-SELECT o.id_orcamento, c.nome_cliente FROM orcamento o
+SELECT o.id_orcamento, c.nome_cliente, o.valor_orcamento FROM orcamento o
     INNER JOIN cliente c ON o.cnpj_cliente = c.cnpj_cliente
         INNER JOIN funcionario f ON o.cpf_funcionario = f.cpf_funcionario
             WHERE f.nome_funcionario LIKE 'Alex Sena';
@@ -217,10 +224,9 @@ SELECT c.nome_cliente FROM cliente c
 WHERE NOT EXISTS (SELECT * FROM orcamento o
                     WHERE o.cnpj_cliente = c.cnpj_cliente);
 
-5 - qual a media dos valores dos orcamentos realizados?
+5 - Qual a media dos valores dos orcamentos realizados?
 
 SELECT AVG(valor_orcamento) AS MEDIA_ORCAMENTO FROM orcamento;
-
 
 6 - Exibir o endereco completo de todos os clientes em ordem alfabetica crescente.
 
@@ -233,7 +239,7 @@ SELECT c.nome_cliente, e.* FROM cliente c, endereco e
 SELECT COUNT(*) AS QTD_ORC_PROD FROM orcamento
     INNER JOIN item on orcamento.id_item = item.id_item AND item.tipo_item = 2;
 
-8 - quais orçamentos foram realizados na primeira quinzena de maio de 2017?
+8 - Quais orçamentos foram realizados na primeira quinzena de maio de 2017?
 
 SELECT * FROM orcamento WHERE data_orcamento BETWEEN
     TO_DATE('01/05/2017', 'dd/mm/yyyy') AND TO_DATE('15/05/2017', 'dd/mm/yyyy');
@@ -243,9 +249,25 @@ SELECT * FROM orcamento WHERE data_orcamento BETWEEN
 SELECT COUNT(*) AS QTD_PESSOAS, cidade_endereco FROM endereco 
     GROUP BY cidade_endereco ORDER BY QTD_PESSOAS DESC;
 
+10 - Exibir os produtos e seus respectivos valores totais.
+        
+SELECT item.*, (qtd_item * valor_item) AS valorTotal FROM item
+WHERE item.tipo_item = 2 ORDER BY valorTotal DESC;
 
 
+## Tarefa 4:
+
+1 - Aumentar em 10% todos os valores de serviços prestados pela empresa.
+
+UPDATE item SET item.valor_item = (item.valor_item * 1.1) WHERE
+item.tipo_item = 1;
+
+2 - Alterar o nome do fornecedor da empresa CNPJ 44332211001 para Ricardo.
+
+UPDATE fornecedor SET fornecedor.nome_fornecedor = 'Ricardo' WHERE
+fornecedor.cnpj_fornecedor like '44332211001';
 
 
+## Tarefa 5:
 
 
